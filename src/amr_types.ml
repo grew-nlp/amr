@@ -11,6 +11,7 @@ module Amr = struct
     | Ref of string
     | Int of int
     | Minus
+    | Plus
 
   type t = {
     sent_id: string;
@@ -31,6 +32,7 @@ module Amr = struct
     | String s -> Printf.printf "\"%s\"" s
     | Int i -> Printf.printf "%d" i
     | Minus -> Printf.printf " -"
+    | Plus -> Printf.printf " +"
     | Ref s -> Printf.printf " %s" s
 
   let print t = print_node t.node

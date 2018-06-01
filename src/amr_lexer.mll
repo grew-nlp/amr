@@ -1,4 +1,5 @@
 {
+  open Printf
   open Amr_parser
   open Lexing
 
@@ -15,6 +16,7 @@ rule main = parse
 | ' ' | '\t'     { main lexbuf }
 | '\n'           { incr line; main lexbuf }
 | '-'            { MINUS }
+| '+'            { PLUS }
 | '('            { LP }
 | ')'            { RP }
 | '/'            { SLASH }
@@ -22,4 +24,4 @@ rule main = parse
 | ":"ident as l  { LABEL l }
 | digit+ as i    { INT (int_of_string i) }
 | quoted as s    { STRING s }
-| _ as c         { raise (Bad_char c) }
+| _ as c         { raise (Failure (sprintf "Bad char: %c" c)) }

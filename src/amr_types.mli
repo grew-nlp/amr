@@ -11,6 +11,7 @@ module Amr: sig
     | Ref of string
     | Int of int
     | Minus
+    | Plus
 
   type t = {
     sent_id: string;

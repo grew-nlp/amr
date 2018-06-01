@@ -1,0 +1,6 @@
+name = "amr"
+description = "Libcaml-amr"
+version = "&VERSION&"
+requires = ""
+archive(byte) = "amr_lib.cma"
+archive(native) = "amr_lib.cmxa"

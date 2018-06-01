@@ -1,0 +1,18 @@
+opam-version: "1.0"
+maintainer: "Bruno.Guillaume@loria.fr"
+homepage: "TODO"
+build: [
+  ["make"]
+]
+install: [
+  ["make" "install"]
+]
+remove: [
+  ["make" "uninstall"]
+]
+depends: [
+  "ANSITerminal"
+  "libcaml-log"
+  "containers"
+  "yojson"
+]

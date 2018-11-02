@@ -5,6 +5,9 @@
 
   exception Bad_char of char
   let line = ref 1
+
+  let escaped = ref false
+  let buff = Buffer.create 32
 }
 
 let digit = ['0'-'9']
@@ -21,7 +24,27 @@ rule main = parse
 | ')'            { RP }
 | '/'            { SLASH }
 | ident as s     { IDENT s }
-| ":"ident as l  { LABEL l }
-| digit+ as i    { INT (int_of_string i) }
-| quoted as s    { STRING s }
+| ":"(ident as l) { LABEL l }
+| digit+ as i     { INT (int_of_string i) }
+| '"'             { Buffer.clear buff; string_lex lexbuf }
+
 | _ as c         { raise (Failure (sprintf "Bad char: %c" c)) }
+
+and string_lex = parse
+  | '\\' {
+    if !escaped
+    then (bprintf buff "\\"; escaped := false; string_lex lexbuf)
+    else (escaped := true; string_lex lexbuf)
+  }
+  | '\n' { incr line; Lexing.new_line lexbuf; bprintf buff "\n"; string_lex lexbuf }
+  | '\"' {
+    if !escaped
+    then (bprintf buff "\""; escaped := false; string_lex lexbuf)
+    else (STRING (Buffer.contents buff))
+  }
+  | _ as c {
+    if !escaped then bprintf buff "\\";
+    escaped := false;
+    bprintf buff "%c" c;
+    string_lex lexbuf
+  }

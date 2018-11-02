@@ -20,6 +20,8 @@ module Amr: sig
   }
 
   val print: t -> unit
+
+  val to_gr: t -> string
 end
 
 module Amr_corpus : sig

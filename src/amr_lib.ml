@@ -72,3 +72,5 @@ let load_corpus corpus_file =
     push ();
     Array.of_list !stack
 
+  let to_gr = Amr.to_gr
+

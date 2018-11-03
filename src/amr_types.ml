@@ -42,7 +42,7 @@ module Amr = struct
         match value with
         | Node n ->
           bprintf buff " %s -[%s]-> %s;\n" node.id lab n.id;
-          loop ("CONCEPT", n.concept) (node::already_done) n;
+          loop ("label", sprintf "\"%s\"" n.concept) (node::already_done) n;
           acc
         | String s -> (lab, s) :: acc
         | Int i -> (lab, string_of_int i) :: acc
@@ -52,8 +52,8 @@ module Amr = struct
         | Ref r -> (lab, r) :: acc
       ) [init] node.next in
       let l = String.concat "," (List.map (fun (x,y) -> sprintf "%s=%s" x y) label) in
-      bprintf buff " %s [label=\"%s\"];\n" node.id l in
-    loop ("CONCEPT",t.node.concept) [] t.node;
+      bprintf buff " %s [%s];\n" node.id l in
+    loop ("label", sprintf "\"%s\"" t.node.concept) [] t.node;
     bprintf buff "}\n";
     Buffer.contents buff
 

@@ -1,6 +1,6 @@
 opam-version: "1.0"
 maintainer: "Bruno.Guillaume@loria.fr"
-homepage: "TODO"
+homepage: "https://gitlab.inria.fr/libcaml-amr"
 build: [
   ["make"]
 ]

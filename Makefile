@@ -1,7 +1,7 @@
 OCB_FLAGS = -use-ocamlfind -use-menhir -I src
 OCB = ocamlbuild $(OCB_FLAGS)
 
-LIB_FILES = amr_lib.cma amr_lib.cmxa amr_lib.a amr_lib.cmi amr_lib.cmx amr_types.cmi amr_types.cmx
+LIB_FILES = libamr.cma libamr.cmxa libamr.a libamr.cmi libamr.cmx #amr_types.cmi amr_types.cmx
 INSTALL_FILES = $(LIB_FILES:%=_build/src/%)
 
 VERSION = `cat VERSION`

@@ -44,10 +44,10 @@ module Amr = struct
           bprintf buff " %s -[%s]-> %s;\n" node.id lab n.id;
           loop ("label", sprintf "\"%s\"" n.concept) (node::already_done) n;
           acc
-        | String s -> (lab, s) :: acc
+        | String s -> (lab, "\""^s^"\"") :: acc
         | Int i -> (lab, string_of_int i) :: acc
-        | Minus -> (lab, "-") :: acc
-        | Plus -> (lab, "+") :: acc
+        | Minus -> (lab, "\"-\"") :: acc
+        | Plus -> (lab, "\"+\"") :: acc
         | Ref r when String_set.mem r ids -> bprintf buff " %s -[%s]-> %s;\n" node.id lab r; acc
         | Ref r -> (lab, r) :: acc
       ) [init] node.next in
@@ -77,6 +77,3 @@ module Amr = struct
   let print t = print_node t.node
 end
 
-module Amr_corpus = struct
-  type t = (string * Amr.t) array
-end

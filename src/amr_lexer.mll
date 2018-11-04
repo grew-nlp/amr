@@ -12,7 +12,6 @@
 
 let digit = ['0'-'9']
 let letter = ['a'-'z' 'A'-'Z']
-let quoted = '"'([^ '"' ]+)'"'
 let ident = letter (letter | digit | '-')*
 
 rule main = parse

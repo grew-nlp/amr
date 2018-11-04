@@ -23,7 +23,3 @@ module Amr: sig
 
   val to_gr: t -> string
 end
-
-module Amr_corpus : sig
-  type t = (string * Amr.t) array
-end

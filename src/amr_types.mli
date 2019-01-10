@@ -7,9 +7,8 @@ module Amr: sig
 
   and value =
     | Node of node
-    | String of string
+    | Data of string
     | Ref of string
-    | Int of float
     | Minus
     | Plus
 

@@ -11,9 +11,8 @@ module Amr = struct
 
   and value =
     | Node of node
-    | String of string
+    | Data of string
     | Ref of string
-    | Int of float
     | Minus
     | Plus
 
@@ -44,8 +43,7 @@ module Amr = struct
           bprintf buff " %s -[%s]-> %s;\n" node.id lab n.id;
           loop ("label", sprintf "\"%s\"" n.concept) (node::already_done) n;
           acc
-        | String s -> (lab, "\""^s^"\"") :: acc
-        | Int i -> (lab, "\""^(string_of_float i) ^ "\"") :: acc
+        | Data s -> (lab, "\""^s^"\"") :: acc
         | Minus -> (lab, "\"-\"") :: acc
         | Plus -> (lab, "\"+\"") :: acc
         | Ref r when String_set.mem r ids -> bprintf buff " %s -[%s]-> %s;\n" node.id lab r; acc
@@ -57,7 +55,6 @@ module Amr = struct
     bprintf buff "}\n";
     Buffer.contents buff
 
-
   let rec print_node ?(pref="") t =
     match t.next with
     | [] -> Printf.printf "(%s / %s)" t.id t.concept;
@@ -68,8 +65,7 @@ module Amr = struct
 
   and print_value pref = function
     | Node t -> print_node ~pref t
-    | String s -> Printf.printf "\"%s\"" s
-    | Int i -> Printf.printf "%g" i
+    | Data s -> Printf.printf "\"%s\"" s
     | Minus -> Printf.printf " -"
     | Plus -> Printf.printf " +"
     | Ref s -> Printf.printf " %s" s

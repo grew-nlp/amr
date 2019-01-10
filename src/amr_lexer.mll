@@ -11,7 +11,7 @@
 }
 
 let digit = ['0'-'9']
-let numeral = '-'? digit+ ("." digit+)?
+let numeral = '-'? digit+ (['.' ':'] digit+)?
 let letter = ['a'-'z' 'A'-'Z']
 let ident = letter (letter | digit | '-')*
 
@@ -25,7 +25,7 @@ rule main = parse
 | '/'             { SLASH }
 | ident as s      { IDENT s }
 | ":"(ident as l) { LABEL l }
-| numeral as i    { INT (float_of_string i) }
+| numeral as i    { DATA i }
 | '"'             { Buffer.clear buff; string_lex lexbuf }
 
 | _ as c         { raise (Failure (sprintf "Bad char: %c" c)) }
@@ -40,7 +40,7 @@ and string_lex = parse
   | '\"' {
     if !escaped
     then (bprintf buff "\""; escaped := false; string_lex lexbuf)
-    else (STRING (Buffer.contents buff))
+    else (DATA (Buffer.contents buff))
   }
   | _ as c {
     if !escaped then bprintf buff "\\";

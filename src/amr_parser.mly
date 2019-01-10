@@ -4,8 +4,7 @@
 
 %token <string> IDENT
 %token <string> LABEL
-%token <string> STRING
-%token <float> INT
+%token <string> DATA
 %token LP RP SLASH MINUS PLUS
 
 %start <Amr_types.Amr.node> amr
@@ -17,8 +16,7 @@ amr:
 ;
 
 value:
-  | l = LABEL i = INT    { (l, Amr.Int i) }
-  | l = LABEL s = STRING { (l, Amr.String s) }
+  | l = LABEL s = DATA   { (l, Amr.Data s) }
   | l = LABEL MINUS      { (l, Amr.Minus) }
   | l = LABEL PLUS       { (l, Amr.Plus) }
   | l = LABEL i = IDENT  { (l, Amr.Ref i) }

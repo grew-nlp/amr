@@ -5,7 +5,7 @@ module Amr = struct
 
   exception Error of string (* TODO json *)
 
-  let parse_aux ?(delta=1) amr_string =
+  let parse_aux ?(delta=1) sentid amr_string =
     Amr_lexer.line := delta;
     let lexbuf = Lexing.from_string amr_string in
       try
@@ -13,10 +13,12 @@ module Amr = struct
         let amr = { Amr_types.Amr.sent_id = "None"; node; meta=[] } in
       amr
       with
-        | Amr_parser.Error -> raise (Error (Printf.sprintf "[line %d] Syntax error: %s" !Amr_lexer.line (Lexing.lexeme lexbuf)))
-        | Failure msg -> raise (Error (Printf.sprintf "[line %d] Error: %s" !Amr_lexer.line msg))
+        | Amr_parser.Error ->
+          raise (Error (Printf.sprintf "[line %d, sentid %s] Syntax error: %s" !Amr_lexer.line sentid (Lexing.lexeme lexbuf)))
+        | Failure msg ->
+          raise (Error (Printf.sprintf "[line %d, sentid %s] Error: %s" !Amr_lexer.line sentid msg))
 
-  let parse amr_string = parse_aux amr_string
+  let parse amr_string = parse_aux "UNKNOWN" amr_string
 
   let load amr_file =
     let in_ch = open_in amr_file in
@@ -57,7 +59,7 @@ module Amr_corpus = struct
         let sent_text = match List.assoc_opt "::snt" meta with
         | Some t -> t
         | None -> "No_text" in
-        stack := (sentid, sent_text, Amr.parse_aux ~delta:!delta (Buffer.contents buff)) :: !stack;
+        stack := (sentid, sent_text, Amr.parse_aux ~delta:!delta sentid (Buffer.contents buff)) :: !stack;
         Buffer.clear buff;
         current_meta := [] in
 

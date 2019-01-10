@@ -5,7 +5,7 @@
 %token <string> IDENT
 %token <string> LABEL
 %token <string> STRING
-%token <int> INT
+%token <float> INT
 %token LP RP SLASH MINUS PLUS
 
 %start <Amr_types.Amr.node> amr

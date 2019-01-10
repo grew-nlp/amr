@@ -9,7 +9,7 @@ module Amr: sig
     | Node of node
     | String of string
     | Ref of string
-    | Int of int
+    | Int of float
     | Minus
     | Plus
 

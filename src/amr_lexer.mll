@@ -11,20 +11,21 @@
 }
 
 let digit = ['0'-'9']
+let numeral = '-'? digit+ ("." digit+)?
 let letter = ['a'-'z' 'A'-'Z']
 let ident = letter (letter | digit | '-')*
 
 rule main = parse
-| ' ' | '\t'     { main lexbuf }
-| '\n'           { incr line; main lexbuf }
-| '-'            { MINUS }
-| '+'            { PLUS }
-| '('            { LP }
-| ')'            { RP }
-| '/'            { SLASH }
-| ident as s     { IDENT s }
+| ' ' | '\t'      { main lexbuf }
+| '\n'            { incr line; main lexbuf }
+| '-'             { MINUS }
+| '+'             { PLUS }
+| '('             { LP }
+| ')'             { RP }
+| '/'             { SLASH }
+| ident as s      { IDENT s }
 | ":"(ident as l) { LABEL l }
-| digit+ as i     { INT (int_of_string i) }
+| numeral as i    { INT (float_of_string i) }
 | '"'             { Buffer.clear buff; string_lex lexbuf }
 
 | _ as c         { raise (Failure (sprintf "Bad char: %c" c)) }

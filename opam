@@ -1,4 +1,4 @@
-opam-version: "1.0"
+opam-version: "2.0"
 maintainer: "Bruno.Guillaume@loria.fr"
 homepage: "https://gitlab.inria.fr/libcaml-amr"
 build: [
@@ -17,3 +17,7 @@ depends: [
   "containers"
   "yojson"
 ]
+synopsis: "An ocaml library to load AMR corpus files"
+url {
+  src: "http://opam.grew.fr/tgz/libcaml-amr.##VERSION##.tgz"
+}

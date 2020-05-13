@@ -48,7 +48,7 @@ module Amr_corpus = struct
     let buff = Buffer.create 32 in
     let current_meta = ref [] in
     let stack = ref [] in
-    let delta = ref 0 in
+    let delta = ref None in
 
     let push () = match !current_meta with
       | [] -> ()
@@ -59,7 +59,7 @@ module Amr_corpus = struct
         let sent_text = match List.assoc_opt "::snt" meta with
         | Some t -> t
         | None -> "No_text" in
-        stack := (sentid, sent_text, Amr.parse_aux ~delta:!delta sentid (Buffer.contents buff)) :: !stack;
+        stack := (sentid, sent_text, Amr.parse_aux ?delta:!delta sentid (Buffer.contents buff)) :: !stack;
         Buffer.clear buff;
         current_meta := [] in
 
@@ -79,15 +79,17 @@ module Amr_corpus = struct
     try
       while true do
         match next () with
-        | "" -> push ()
+        | "" -> push (); delta := None
         | s when s.[0] = '#' ->
           let items = Str.full_split (Str.regexp "::[a-z]+") s in
           push_items items
-        | s -> bprintf buff "%s\n" s
+        | s ->
+          if !delta=None then delta := Some !line_num;
+          bprintf buff "%s\n" s
       done;
       assert false
     with
     | End_of_file ->
       push ();
-      Array.of_list !stack
+      Array.of_list (List.rev !stack)
 end

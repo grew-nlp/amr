@@ -1,2 +1,2 @@
-true:	package(containers,unix,str,yojson,ANSITerminal,log)
+true:	package(str,yojson)
 true: bin_annot

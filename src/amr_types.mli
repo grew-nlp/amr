@@ -21,4 +21,7 @@ module Amr: sig
   val print: t -> unit
 
   val to_gr: t -> string
+
+  val to_json: t -> Yojson.Basic.t
+
 end

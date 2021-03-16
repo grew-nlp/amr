@@ -1,28 +1,28 @@
 open Printf
+open Libamr
 
-(*
+
 let _ =
   printf "======================= Amr_lib.parse =======================\n";
-  let amr = Amr_lib.parse "(c / chapter :mod 1)" in
-  Amr_types.Amr.print amr;
-  printf "\n%!"
-
+  let amr = Amr.parse "(c / chapter :mod 1)" in
+  printf "%s\n%!" (Amr.to_gr amr)
 
 let _ =
   printf "======================= Amr_lib.load =======================\n";
-  let amr = Amr_lib.load "test/one.amr" in
-  Amr_types.Amr.print amr;
-  printf "\n%!"
- *)
+  let amr = Amr.load "one.amr" in
+  printf "%s\n%!" (Amr.to_gr amr)
 
 let _ =
   printf "======================= Amr_lib.load =======================\n";
-  let amr_corpus = Amr_lib.load_corpus "test/AMR/amr-bank-v1.6.txt" in
-  let amr = snd amr_corpus.(1560) in
-  Amr_types.Amr.print amr;
-  printf "\n%!";
-  printf "======================= Amr_lib.to_gr =======================\n";
-  printf "%s\n%!" (Amr_lib.to_gr amr)
+  let amr_corpus = Amr_corpus.load "AMR/lpp_1943.amr" in
+  let (_,amr) = amr_corpus.(10) in
+  printf "%s\n%!" (Amr.to_gr amr);
 
+  printf "======================= JSON =======================\n";
+  printf "%s\n%!" (Yojson.pretty_to_string (Amr.to_json amr));
 
-
+  Array.iter
+    (fun (_,amr) ->
+      (* printf "id:%s\n%!" id; *)
+      ignore (Amr.to_json amr)
+    ) amr_corpus

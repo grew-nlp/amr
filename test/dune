@@ -1,0 +1,3 @@
+(executable
+ (name amr_test)
+ (libraries containers str yojson amr))

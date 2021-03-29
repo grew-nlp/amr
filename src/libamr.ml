@@ -24,7 +24,7 @@ module Amr = struct
 
   exception Error of string (* TODO json *)
 
-  let parse_aux ?(delta=1) sent_id text_opt amr_string =
+  let parse_aux ?(delta=1) sent_id meta amr_string =
     Amr_lexer.line := delta;
     let lexbuf = Lexing.from_string amr_string in
     try
@@ -32,7 +32,7 @@ module Amr = struct
       let amr = {
         Amr_types.Amr.sent_id = sent_id;
         node;
-        meta = match text_opt with None -> [] | Some t -> [("text", t)]
+        meta;
       } in
       amr
     with
@@ -41,7 +41,7 @@ module Amr = struct
     | Failure msg ->
       raise (Error (Printf.sprintf "[line %d, sent_id %s] Error: %s" !Amr_lexer.line sent_id msg))
 
-  let parse amr_string = parse_aux "__no_sent_id__" None amr_string
+  let parse amr_string = parse_aux "__no_sent_id__" [] amr_string
 
   let load amr_file =
     let in_ch = open_in amr_file in
@@ -73,14 +73,20 @@ module Amr_corpus = struct
     let stack = ref [] in
     let delta = ref None in
 
-    let push () = match !current_meta with
-      | [] -> ()
-      | meta ->
-        let sent_id = match List.assoc_opt "::id" meta with
+    let counter = ref 0 in
+    let push () =
+      match !current_meta with
+      | [] -> () (* get rid of part without any metadata (first lines with info for the whole file) *)
+      | _ ->
+        incr counter;
+        let sent_id = match List.assoc_opt "::id" !current_meta with
           | Some id -> id
-          | None -> "No_id" in
-        let text_opt = List.assoc_opt "::snt" meta in
-        stack := (sent_id, Amr.parse_aux ?delta:!delta sent_id text_opt (Buffer.contents buff)) :: !stack;
+          | None -> sprintf "__%05d" !counter in
+        let meta =
+          !current_meta
+          |> (List.remove_assoc "::id" )
+          |> (List.map (function ("::snt",t) -> ("text",t) | (k,v) -> (String.sub k 2 ((String.length k) -2),v))) in
+        stack := (sent_id, Amr.parse_aux ?delta:!delta sent_id meta (Buffer.contents buff)) :: !stack;
         Buffer.clear buff;
         current_meta := [] in
 
@@ -97,7 +103,7 @@ module Amr_corpus = struct
         match line with
         | "" -> push (); delta := None
         | s when s.[0] = '#' ->
-          let items = Str.full_split (Str.regexp "::[a-z]+") s in
+          let items = Str.full_split (Str.regexp "::[-a-z]+") s in
           push_items items
         | s ->
           if !delta=None then delta := Some line_num;

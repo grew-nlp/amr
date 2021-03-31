@@ -20,6 +20,7 @@ module Amr = struct
     sent_id: string;
     meta: (string * string) list;
     node: node;
+    code: string;
   }
 
   let to_ids t =
@@ -84,6 +85,7 @@ module Amr = struct
       ("meta", `Assoc meta);
       ("nodes", `Assoc nodes);
       ("edges", `List edges);
+      ("code", `String t.code);
     ]
 
 

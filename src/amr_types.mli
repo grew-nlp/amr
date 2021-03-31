@@ -16,6 +16,7 @@ module Amr: sig
     sent_id: string;
     meta: (string * string) list;
     node: node;
+    code: string;
   }
 
   val print: t -> unit

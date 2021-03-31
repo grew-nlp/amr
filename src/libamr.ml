@@ -33,6 +33,7 @@ module Amr = struct
         Amr_types.Amr.sent_id = sent_id;
         node;
         meta;
+        code=amr_string;
       } in
       amr
     with
@@ -48,7 +49,7 @@ module Amr = struct
     let lexbuf = Lexing.from_channel in_ch in
     try
       let node = Amr_parser.amr Amr_lexer.main lexbuf in
-      let amr = { Amr_types.Amr.sent_id = "None"; node; meta=[] } in
+      let amr = { Amr_types.Amr.sent_id = "None"; node; meta=[]; code="" } in
       amr
     with
     | Amr_parser.Error -> raise (Error (Printf.sprintf "[line %d] Syntax error: %s" !Amr_lexer.line (Lexing.lexeme lexbuf)))
@@ -82,11 +83,12 @@ module Amr_corpus = struct
         let sent_id = match List.assoc_opt "::id" !current_meta with
           | Some id -> id
           | None -> sprintf "__%05d" !counter in
+        let code = Buffer.contents buff in
         let meta =
           !current_meta
           |> (List.remove_assoc "::id" )
           |> (List.map (function ("::snt",t) -> ("text",t) | (k,v) -> (String.sub k 2 ((String.length k) -2),v))) in
-        stack := (sent_id, Amr.parse_aux ?delta:!delta sent_id meta (Buffer.contents buff)) :: !stack;
+        stack := (sent_id, Amr.parse_aux ?delta:!delta sent_id meta code) :: !stack;
         Buffer.clear buff;
         current_meta := [] in
 

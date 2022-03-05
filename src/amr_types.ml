@@ -79,17 +79,15 @@ module Amr = struct
       ((node.id, `Assoc json_node)::new_nodes, new_edges) in
     let (nodes, edges) = loop ([],[]) t.node in
 
-    let meta = ("sent_id", `String t.sent_id) ::
+    let meta = 
+      ("sent_id", `String t.sent_id) ::
+      ("code", `String t.code) ::
       (List.map (fun (k,v) -> (k, `String v)) t.meta) in
     `Assoc [
       ("meta", `Assoc meta);
       ("nodes", `Assoc nodes);
       ("edges", `List edges);
-      ("code", `String t.code);
     ]
-
-
-
 
   let rec print_node ?(pref="") t =
     match t.next with

@@ -57,7 +57,7 @@ module Amr = struct
 
   let to_gr = Amr_types.Amr.to_gr
 
-  let to_json t = Amr_types.Amr.to_json t
+  let to_json ?unfold t = Amr_types.Amr.to_json ?unfold t
 end
 
 module Amr_corpus = struct

@@ -52,7 +52,9 @@ module Amr = struct
     bprintf buff "}\n";
     Buffer.contents buff
 
-  let to_json t =
+  let to_json ?(unfold=false) t =
+    let cpt = ref 0 in
+    let fresh_id () = incr cpt; sprintf "v_%d" !cpt in
     let ids = to_ids t in
     let rec loop (acc_nodes, acc_edges) node =
       (* let new_nodes = (node.id, `String node.concept) :: acc_nodes in *)
@@ -60,7 +62,12 @@ module Amr = struct
         List.fold_left
           (fun (acc_node, acc2_nodes, acc2_edges) (label,value) ->
              match value with
-             | Data s -> ((label,`String s)::acc_node, acc2_nodes, acc2_edges)
+             | Data s when not unfold -> ((label,`String s)::acc_node, acc2_nodes, acc2_edges)
+             | Data s ->
+                let new_id = fresh_id () in
+                let new_node = (new_id, `Assoc [("value", `String s)]) in
+                let new_edge = `Assoc [("src", `String node.id); ("label", `String label); ("tar", `String new_id)] in
+                 (acc_node, new_node::acc2_nodes, new_edge :: acc2_edges)
              | Node n ->
                 let edge = `Assoc [("src", `String node.id); ("label", `String label); ("tar", `String n.id)] in
                 let (new_nodes,new_edges) = loop (acc2_nodes, edge :: acc2_edges) n in

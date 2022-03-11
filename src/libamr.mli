@@ -9,7 +9,8 @@ module Amr : sig
 
   val to_gr: t -> string
 
-  val to_json: t -> Yojson.Basic.t
+  (* if [unfold] is set to true, all values are represented as a new node; else there are features *)
+  val to_json: ?unfold:bool -> t -> Yojson.Basic.t
 end
 
 module Amr_corpus : sig

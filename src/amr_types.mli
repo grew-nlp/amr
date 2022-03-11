@@ -9,8 +9,6 @@ module Amr: sig
     | Node of node
     | Data of string
     | Ref of string
-    | Minus
-    | Plus
 
   type t = {
     sent_id: string;

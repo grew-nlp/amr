@@ -17,8 +17,8 @@ amr:
 
 value:
   | l = LABEL s = DATA   { (l, Amr.Data s) }
-  | l = LABEL MINUS      { (l, Amr.Minus) }
-  | l = LABEL PLUS       { (l, Amr.Plus) }
+  | l = LABEL MINUS      { (l, Amr.Data "-") }
+  | l = LABEL PLUS       { (l, Amr.Data "+") }
   | l = LABEL i = IDENT  { (l, Amr.Ref i) }
   | l = LABEL a = amr    { (l, Amr.Node a) }
 ;

@@ -13,8 +13,6 @@ module Amr = struct
     | Node of node
     | Data of string
     | Ref of string
-    | Minus
-    | Plus
 
   type t = {
     sent_id: string;
@@ -45,8 +43,6 @@ module Amr = struct
                loop ("label", sprintf "\"%s\"" n.concept) (node::already_done) n;
                acc
              | Data s -> (lab, "\""^s^"\"") :: acc
-             | Minus -> (lab, "\"-\"") :: acc
-             | Plus -> (lab, "\"+\"") :: acc
              | Ref r when String_set.mem r ids -> bprintf buff " %s -[%s]-> %s;\n" node.id lab r; acc
              | Ref r -> (lab, r) :: acc
           ) [init] node.next in
@@ -65,8 +61,6 @@ module Amr = struct
           (fun (acc_node, acc2_nodes, acc2_edges) (label,value) ->
              match value with
              | Data s -> ((label,`String s)::acc_node, acc2_nodes, acc2_edges)
-             | Plus -> ((label,`String "+")::acc_node, acc2_nodes, acc2_edges)
-             | Minus -> ((label,`String "-")::acc_node, acc2_nodes, acc2_edges)
              | Node n ->
                 let edge = `Assoc [("src", `String node.id); ("label", `String label); ("tar", `String n.id)] in
                 let (new_nodes,new_edges) = loop (acc2_nodes, edge :: acc2_edges) n in
@@ -99,9 +93,9 @@ module Amr = struct
 
   and print_value pref = function
     | Node t -> print_node ~pref t
+    | Data "-" -> Printf.printf " -"
+    | Data "+" -> Printf.printf " +"
     | Data s -> Printf.printf "\"%s\"" s
-    | Minus -> Printf.printf " -"
-    | Plus -> Printf.printf " +"
     | Ref s -> Printf.printf " %s" s
 
   let print t = print_node t.node

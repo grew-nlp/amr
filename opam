@@ -13,7 +13,6 @@ remove: [
 depends: [
   "ANSITerminal"
   "menhir"
-  "libcaml-log"
   "containers"
   "yojson"
 ]

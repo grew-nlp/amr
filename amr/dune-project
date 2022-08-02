@@ -7,22 +7,22 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github grew-nlp/amr))
 
-(authors "Author Name")
+(authors "Bruno Guillaume")
 
-(maintainers "Maintainer Name")
+(maintainers "Bruno Guillaume")
 
-(license LICENSE)
+(license CeCILL)
 
-(documentation https://url/to/documentation)
+(documentation https://github.com/grew-nlp/amr)
 
 (package
  (name amr)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (synopsis "Parsing of Abstract Meaning Representation corpora")
+ (description "This library was built to be used by Grew to deal with AMR corpora")
  (depends ocaml dune)
  (tags
-  (topics "to describe" your project)))
+  ("nlp" "Abstract Meaning Representation")))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project

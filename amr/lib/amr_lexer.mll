@@ -1,7 +1,6 @@
 {
   open Printf
   open Amr_parser
-  open Lexing
 
   exception Bad_char of char
   let line = ref 1

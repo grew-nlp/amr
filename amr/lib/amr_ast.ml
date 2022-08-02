@@ -2,7 +2,7 @@ open Printf
 
 module String_set = Set.Make (String)
 
-module Amr = struct
+module Ast = struct
   type node = {
     id: string;
     concept: string;

@@ -1,4 +1,4 @@
-module Amr: sig
+module Ast: sig
   type node = {
     id: string;
     concept: string;

@@ -1,3 +1,8 @@
+(menhir
+ (modules amr_parser))
+(ocamllex amr_lexer)
 (library
  (public_name amr)
- (name amr))
+ (name amr)
+ (libraries str yojson)
+)

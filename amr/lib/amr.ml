@@ -1,4 +1,5 @@
 open Printf
+open Amr_ast
 
 (* [read_nlines file] returns a list of couples (line_num, line). *)
 let read_nlines file =
@@ -20,7 +21,7 @@ let read_nlines file =
 
 
 module Amr = struct
-  type t = Amr_types.Amr.t
+  type t = Ast.t
 
   exception Error of string (* TODO json *)
 
@@ -30,7 +31,7 @@ module Amr = struct
     try
       let node = Amr_parser.amr Amr_lexer.main lexbuf in
       let amr = {
-        Amr_types.Amr.sent_id = sent_id;
+        Ast.sent_id = sent_id;
         node;
         meta;
         code=amr_string;
@@ -49,15 +50,15 @@ module Amr = struct
     let lexbuf = Lexing.from_channel in_ch in
     try
       let node = Amr_parser.amr Amr_lexer.main lexbuf in
-      let amr = { Amr_types.Amr.sent_id = "None"; node; meta=[]; code="" } in
+      let amr = { Ast.sent_id = "None"; node; meta=[]; code="" } in
       amr
     with
     | Amr_parser.Error -> raise (Error (Printf.sprintf "[line %d] Syntax error: %s" !Amr_lexer.line (Lexing.lexeme lexbuf)))
     | Failure msg -> raise (Error (Printf.sprintf "[line %d] Error: %s" !Amr_lexer.line msg))
 
-  let to_gr = Amr_types.Amr.to_gr
+  let to_gr = Ast.to_gr
 
-  let to_json ?unfold t = Amr_types.Amr.to_json ?unfold t
+  let to_json ?unfold t = Ast.to_json ?unfold t
 end
 
 module Amr_corpus = struct

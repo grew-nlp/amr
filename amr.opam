@@ -8,9 +8,8 @@ maintainer: ["Bruno Guillaume"]
 authors: ["Bruno Guillaume"]
 license: "CECILL-2.1"
 tags: ["nlp" "Abstract Meaning Representation"]
-homepage: "https://github.com/grew-nlp/amr"
 doc: "https://github.com/grew-nlp/amr"
-bug-reports: "https://github.com/grew-nlp/amr/issues"
+bug-reports: "<https://github.com/grew-nlp/amr/issues>"
 depends: [
   "ocaml"
   "dune" {>= "3.4"}
@@ -30,4 +29,4 @@ build: [
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "git+https://github.com/grew-nlp/amr.git"
+dev-repo: "<http://opam.grew.fr/tgz/amr.__VERSION__.tgz>"

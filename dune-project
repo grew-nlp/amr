@@ -7,12 +7,15 @@
 
 (generate_opam_files true)
 
-(source
- (github grew-nlp/amr))
+(source 
+  (uri <http://opam.grew.fr/tgz/amr.__VERSION__.tgz>)
+)
 
 (authors "Bruno Guillaume")
 
 (maintainers "Bruno Guillaume")
+
+(bug_reports <https://github.com/grew-nlp/amr/issues>)
 
 (license CECILL-2.1)
 

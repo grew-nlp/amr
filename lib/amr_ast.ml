@@ -52,7 +52,7 @@ module Ast = struct
     bprintf buff "}\n";
     Buffer.contents buff
 
-  let to_json ?(unfold=false) t =
+  let to_json ?(unfold=false) t : Yojson.Basic.t =
     let cpt = ref 0 in
     let fresh_id () = incr cpt; sprintf "v_%d" !cpt in
     let ids = to_ids t in

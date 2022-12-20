@@ -1,14 +1,14 @@
 (lang dune 3.4)
 
 (name amr)
-(version 0.5.1)
+(version 0.5.2)
 
 (using menhir 2.0)
 
 (generate_opam_files true)
 
-(source 
-  (uri <http://opam.grew.fr/tgz/amr.__VERSION__.tgz>)
+(source
+  (github grew-nlp/amr)
 )
 
 (authors "Bruno Guillaume")
@@ -27,6 +27,5 @@
  (description "This library was built to be used by Grew to deal with AMR corpora")
  (depends ocaml dune yojson menhir)
  (tags
-  ("nlp" "Abstract Meaning Representation")))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
+  ("nlp" "Abstract Meaning Representation"))
+)

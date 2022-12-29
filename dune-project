@@ -27,5 +27,6 @@
  (description "This library was built to be used by Grew to deal with AMR corpora")
  (depends ocaml dune yojson menhir)
  (tags
-  ("nlp" "Abstract Meaning Representation"))
+  ("nlp" "Abstract Meaning Representation")) 
+ (conflicts libcaml-amr)
 )

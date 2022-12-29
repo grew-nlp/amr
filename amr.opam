@@ -18,6 +18,7 @@ depends: [
   "menhir"
   "odoc" {with-doc}
 ]
+conflicts: ["libcaml-amr"]
 build: [
   ["dune" "subst"] {dev}
   [

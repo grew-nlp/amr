@@ -25,16 +25,16 @@ module Amr = struct
 
   exception Error of string (* TODO json *)
 
-  let parse_aux ?(delta=1) sent_id meta amr_string =
+  let parse_aux ?(delta=1) sent_id meta penman =
     Amr_lexer.line := delta;
-    let lexbuf = Lexing.from_string amr_string in
+    let lexbuf = Lexing.from_string penman in
     try
-      let node = Amr_parser.amr Amr_lexer.main lexbuf in
+      let graph = Amr_parser.amr Amr_lexer.main lexbuf in
       let amr = {
         Ast.sent_id = sent_id;
-        node;
+        graph;
         meta;
-        code=amr_string;
+        penman;
       } in
       amr
     with
@@ -43,14 +43,14 @@ module Amr = struct
     | Failure msg ->
       raise (Error (Printf.sprintf "[line %d, sent_id %s] Error: %s" !Amr_lexer.line sent_id msg))
 
-  let parse amr_string = parse_aux "__no_sent_id__" [] amr_string
+  let parse penman = parse_aux "__no_sent_id__" [] penman
 
   let load amr_file =
     let in_ch = open_in amr_file in
     let lexbuf = Lexing.from_channel in_ch in
     try
-      let node = Amr_parser.amr Amr_lexer.main lexbuf in
-      let amr = { Ast.sent_id = "None"; node; meta=[]; code="" } in
+      let graph = Amr_parser.amr Amr_lexer.main lexbuf in
+      let amr = { Ast.sent_id = "None"; graph; meta=[]; penman="" } in
       amr
     with
     | Amr_parser.Error -> raise (Error (Printf.sprintf "[line %d] Syntax error: %s" !Amr_lexer.line (Lexing.lexeme lexbuf)))
@@ -82,12 +82,12 @@ module Amr_corpus = struct
         let sent_id = match List.assoc_opt "::id" !current_meta with
           | Some id -> id
           | None -> sprintf "__%05d" !counter in
-        let code = Buffer.contents buff in
+        let penman = Buffer.contents buff in
         let meta =
           !current_meta
           |> (List.remove_assoc "::id" )
           |> (List.map (function ("::snt",t) -> ("text",t) | (k,v) -> (String.sub k 2 ((String.length k) -2),v))) in
-        stack := (sent_id, Amr.parse_aux ?delta:!delta sent_id meta code) :: !stack;
+        stack := (sent_id, Amr.parse_aux ?delta:!delta sent_id meta penman) :: !stack;
         Buffer.clear buff;
         current_meta := [] in
 

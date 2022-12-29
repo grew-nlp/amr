@@ -13,8 +13,8 @@ module Ast: sig
   type t = {
     sent_id: string;
     meta: (string * string) list;
-    node: node;
-    code: string;
+    graph: node;
+    penman: string;
   }
 
   val print: t -> unit

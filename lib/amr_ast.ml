@@ -17,8 +17,8 @@ module Ast = struct
   type t = {
     sent_id: string;
     meta: (string * string) list;
-    node: node;
-    code: string;
+    graph: node;
+    penman: string;
   }
 
   let to_ids t =
@@ -28,7 +28,7 @@ module Ast = struct
            | Node n -> String_set.union (loop n) acc
            | _ -> acc
         ) (String_set.singleton node.id) node.next in
-    loop t.node
+    loop t.graph
 
   let to_json ?(unfold=false) t : Yojson.Basic.t =
     let cpt = ref 0 in
@@ -56,11 +56,11 @@ module Ast = struct
              | Ref r -> ((label,`String r)::acc_node, acc2_nodes, acc2_edges)
           ) ([("concept", `String node.concept)], acc_nodes, acc_edges) node.next in
       ((node.id, `Assoc json_node)::new_nodes, new_edges) in
-    let (nodes, edges) = loop ([],[]) t.node in
+    let (nodes, edges) = loop ([],[]) t.graph in
 
     let meta = 
       ("sent_id", `String t.sent_id) ::
-      ("code", `String t.code) ::
+      ("code", `String t.penman) ::
       (List.map (fun (k,v) -> (k, `String v)) t.meta) in
     `Assoc [
       ("meta", `Assoc meta);
@@ -83,6 +83,6 @@ module Ast = struct
     | Data s -> Printf.printf "\"%s\"" s
     | Ref s -> Printf.printf " %s" s
 
-  let print t = print_node t.node
+  let print t = print_node t.graph
 end
 

@@ -30,28 +30,6 @@ module Ast = struct
         ) (String_set.singleton node.id) node.next in
     loop t.node
 
-  let to_gr t =
-    let buff = Buffer.create 32 in
-    let ids = to_ids t in
-    bprintf buff "graph {\n";
-    let rec loop init already_done node =
-      let label = List.fold_left
-          (fun acc (lab,value) ->
-             match value with
-             | Node n ->
-               bprintf buff " %s -[%s]-> %s;\n" node.id lab n.id;
-               loop ("label", sprintf "\"%s\"" n.concept) (node::already_done) n;
-               acc
-             | Data s -> (lab, "\""^s^"\"") :: acc
-             | Ref r when String_set.mem r ids -> bprintf buff " %s -[%s]-> %s;\n" node.id lab r; acc
-             | Ref r -> (lab, r) :: acc
-          ) [init] node.next in
-      let l = String.concat "," (List.map (fun (x,y) -> sprintf "%s=%s" x y) label) in
-      bprintf buff " %s [%s];\n" node.id l in
-    loop ("label", sprintf "\"%s\"" t.node.concept) [] t.node;
-    bprintf buff "}\n";
-    Buffer.contents buff
-
   let to_json ?(unfold=false) t : Yojson.Basic.t =
     let cpt = ref 0 in
     let fresh_id () = incr cpt; sprintf "v_%d" !cpt in

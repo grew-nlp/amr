@@ -56,8 +56,6 @@ module Amr = struct
     | Amr_parser.Error -> raise (Error (Printf.sprintf "[line %d] Syntax error: %s" !Amr_lexer.line (Lexing.lexeme lexbuf)))
     | Failure msg -> raise (Error (Printf.sprintf "[line %d] Error: %s" !Amr_lexer.line msg))
 
-  let to_gr = Ast.to_gr
-
   let to_json ?unfold t = Ast.to_json ?unfold t
 end
 

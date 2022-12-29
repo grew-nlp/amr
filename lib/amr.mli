@@ -13,10 +13,6 @@ module Amr : sig
   val load: string -> t
   (** Parsing of a file into an AMR graph *)
 
-  val to_gr: t -> string
-  (** Convert the AMR graph into the Grew "gr" notation 
-      @deprecated the "gr" format is not maintained in Grew *)
-
   val to_json: ?unfold:bool -> t -> Yojson.Basic.t
   (** Convert the AMR graph into the Grew JSON encoding of graphs.
   @see<https://grew.fr/doc/json/>

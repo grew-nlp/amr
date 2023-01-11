@@ -12,7 +12,7 @@
 let digit = ['0'-'9']
 let numeral = '-'? digit+ (['.' ':'] digit+)?
 let letter = ['a'-'z' 'A'-'Z']
-let ident = letter (letter | digit | '-' | '_' | '.' | '\'')*
+let ident = (letter | '_' | '\'') (letter | digit | '-' | '_' | '.' | '\'')*
 
 rule main = parse
 | ' ' | '\t'      { main lexbuf }

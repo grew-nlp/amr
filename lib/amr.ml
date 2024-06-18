@@ -19,52 +19,39 @@ let read_nlines file =
     close_in in_ch;
     List.rev !rev_lines
 
+let pp_pos delta { Ppxlib.pos_lnum; pos_cnum; pos_bol; _} =
+  Printf.sprintf "line %d:%d" (delta + pos_lnum) (pos_cnum - pos_bol)
+
+
 
 module Amr = struct
   type t = Ast.t
 
   exception Error of string (* TODO json *)
 
-  let parse_aux ?(delta=1) sent_id meta penman =
-    Amr_lexer.line := delta;
-    let lexbuf = Lexing.from_string penman in
-    try
-      let graph = Amr_parser.amr Amr_lexer.main lexbuf in
-      let amr = {
-        Ast.sent_id = sent_id;
-        graph;
-        meta;
-        penman;
-      } in
-      amr
-    with
-    | Amr_parser.Error ->
-      raise (Error (Printf.sprintf "[line %d, sent_id %s] Syntax error: %s" !Amr_lexer.line sent_id (Lexing.lexeme lexbuf)))
-    | Failure msg ->
-      raise (Error (Printf.sprintf "[line %d, sent_id %s] Error: %s" !Amr_lexer.line sent_id msg))
+  let form_lexbuf ?(delta=0) ?sent_id ?(meta=[]) ?penman lexbuf =
+    let lexer = Sedlexing.with_tokenizer Amr_lexer.token lexbuf in
+    let parser = MenhirLib.Convert.Simplified.traditional2revised Amr_parser.amr in
+    try let graph = parser lexer in { Ast.sent_id = sent_id; graph; meta; penman; } with
+    | Amr_parser.Error -> raise (Error (Printf.sprintf "Syntax error"))
+    | Amr_lexer.LexError (pos,msg) -> failwith (Printf.sprintf  "lexing error : %s at %s%!" msg (pp_pos delta pos))
+    | Failure msg -> raise (Error (Printf.sprintf "Error: %s" msg))
 
-  let parse penman = parse_aux "__no_sent_id__" [] penman
+  let parse_aux ?(delta=0) ?(sent_id="__no_sent_id__") ?(meta=[]) penman =
+    let lexbuf = Sedlexing.Utf8.from_string penman in
+    form_lexbuf ~delta ~sent_id ~meta ~penman lexbuf
+ 
+  let parse penman = parse_aux penman
 
   let load amr_file =
     let in_ch = open_in amr_file in
-    let lexbuf = Lexing.from_channel in_ch in
-    try
-      let graph = Amr_parser.amr Amr_lexer.main lexbuf in
-      let amr = { Ast.sent_id = "None"; graph; meta=[]; penman="" } in
-      amr
-    with
-    | Amr_parser.Error -> raise (Error (Printf.sprintf "[line %d] Syntax error: %s" !Amr_lexer.line (Lexing.lexeme lexbuf)))
-    | Failure msg -> raise (Error (Printf.sprintf "[line %d] Error: %s" !Amr_lexer.line msg))
+    let lexbuf = Sedlexing.Utf8.from_channel in_ch in
+    form_lexbuf lexbuf
 
   let to_json ?unfold t = Ast.to_json ?unfold t
 end
 
 module Amr_corpus = struct
-  let rm_peripheral_white s =
-    s
-    |> (Str.global_replace (Str.regexp "\\( \\|\t\\)*$") "")
-    |> (Str.global_replace (Str.regexp "^\\( \\|\t\\)*") "")
-
   type t = (string * Amr.t) array
 
   let of_nlines nlines =
@@ -87,13 +74,13 @@ module Amr_corpus = struct
           !current_meta
           |> (List.remove_assoc "::id" )
           |> (List.map (function ("::snt",t) -> ("text",t) | (k,v) -> (String.sub k 2 ((String.length k) -2),v))) in
-        stack := (sent_id, Amr.parse_aux ?delta:!delta sent_id meta penman) :: !stack;
+        stack := (sent_id, Amr.parse_aux ?delta:!delta ~sent_id ~meta penman) :: !stack;
         Buffer.clear buff;
         current_meta := [] in
 
     let rec push_items = function
       | (Str.Delim key) :: (Str.Text value) :: tail ->
-        current_meta := (key, rm_peripheral_white value) :: !current_meta;
+        current_meta := (key, String.trim value) :: !current_meta;
         push_items tail
       | (Str.Delim key) :: tail -> current_meta := (key, "YES") :: !current_meta; push_items tail
       | (Str.Text _) :: tail -> push_items tail
@@ -107,7 +94,7 @@ module Amr_corpus = struct
           let items = Str.full_split (Str.regexp "::[-a-z]+") s in
           push_items items
         | s ->
-          if !delta=None then delta := Some line_num;
+          if !delta=None then delta := Some (line_num - 1);
           bprintf buff "%s\n" s
     ) nlines;
     push ();

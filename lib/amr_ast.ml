@@ -15,10 +15,10 @@ module Ast = struct
     | Ref of string
 
   type t = {
-    sent_id: string;
+    sent_id: string option;
     meta: (string * string) list;
     graph: node;
-    penman: string;
+    penman: string option;
   }
 
   let to_ids t =
@@ -58,10 +58,10 @@ module Ast = struct
       ((node.id, `Assoc json_node)::new_nodes, new_edges) in
     let (nodes, edges) = loop ([],[]) t.graph in
 
-    let meta = 
-      ("sent_id", `String t.sent_id) ::
-      ("code", `String t.penman) ::
-      (List.map (fun (k,v) -> (k, `String v)) t.meta) in
+    let meta =
+      (List.map (fun (k,v) -> (k, `String v)) t.meta)
+      |> (fun acc -> match t.penman with Some s -> ("code", `String s) :: acc | None -> acc)
+      |> (fun acc -> match t.sent_id with Some s -> ("sent_id", `String s) :: acc | None -> acc) in
     `Assoc [
       ("meta", `Assoc meta);
       ("nodes", `Assoc nodes);

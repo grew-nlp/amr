@@ -11,10 +11,10 @@ module Ast: sig
     | Ref of string
 
   type t = {
-    sent_id: string;
+    sent_id: string option;
     meta: (string * string) list;
     graph: node;
-    penman: string;
+    penman: string option;
   }
 
   val print: t -> unit

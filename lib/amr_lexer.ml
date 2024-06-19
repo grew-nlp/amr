@@ -7,9 +7,12 @@ let letter = [%sedlex.regexp? 'a' .. 'z' | 'A' .. 'Z']
 let newline = [%sedlex.regexp? '\r' | '\n' | "\r\n"]
 let numeral = [%sedlex.regexp? Opt ('-'), Plus digit, Opt( ('.' | ':'), Plus digit) ] (* ':' is used in time like 16:30 *)
 
-let remove_first = function
-  | "" -> ""
-  | s -> String.sub s 1 ((String.length s) - 1) 
+let clean_label = function
+  | "" -> "" 
+  | l -> 
+    match String.index_from_opt l 0 '(' with
+    | None -> String.sub l 1 ((String.length l) - 1) 
+    | Some p -> String.sub l 1 (p-1) 
 
 let rec token buf =
   match%sedlex buf with
@@ -22,8 +25,8 @@ let rec token buf =
   | ')' -> RPAREN
   | '/' -> SLASH
   | numeral -> DATA (Sedlexing.Utf8.lexeme buf)
-  | Plus ("-" | tr8876_ident_char | digit) -> IDENT (Sedlexing.Utf8.lexeme buf)
-  | ':', Plus (letter | digit | '-') -> LABEL (Sedlexing.Utf8.lexeme buf |> remove_first)
+  | Plus ("_" | "-" | tr8876_ident_char | digit) -> IDENT (Sedlexing.Utf8.lexeme buf)
+  | ':', Plus (letter | digit | '-'), Opt ('(', Star (letter | digit |'_'), ')') -> LABEL (Sedlexing.Utf8.lexeme buf |> clean_label)
   | eof -> EOF
   | _ ->
     let position = fst @@ Sedlexing.lexing_positions buf in

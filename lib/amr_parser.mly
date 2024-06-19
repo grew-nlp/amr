@@ -15,10 +15,17 @@ amr:
   | a = node EOF { a }
 
 node:
-  | LPAREN i = IDENT SLASH c = IDENT s = list(value) RPAREN    { {Ast.id = i; concept= c; next = s} }
+  | LPAREN i = IDENT SLASH c = value s = list(daughter) RPAREN    { {Ast.id = i; concept= c; next = s} }
+  | LPAREN i = IDENT SLASH RPAREN    { {Ast.id = i; concept= "__EMPTY__"; next = []} }
 ;
 
 value:
+  | c = IDENT  { c }
+  | c = DATA  { c }
+  | PLUS  { "+" }
+  | MINUS  { "-" }
+
+daughter:
   | l = LABEL s = DATA   { (l, Ast.Data s) }
   | l = LABEL MINUS      { (l, Ast.Data "-") }
   | l = LABEL PLUS       { (l, Ast.Data "+") }

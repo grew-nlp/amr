@@ -33,7 +33,7 @@ module Amr = struct
     let lexer = Sedlexing.with_tokenizer Amr_lexer.token lexbuf in
     let parser = MenhirLib.Convert.Simplified.traditional2revised Amr_parser.amr in
     try let graph = parser lexer in { Ast.sent_id = sent_id; graph; meta; penman; } with
-    | Amr_parser.Error -> raise (Error (Printf.sprintf "Syntax error"))
+    | Amr_parser.Error -> raise (Error (Printf.sprintf "Syntax error%s" (match sent_id with Some s -> ": "^s | None -> "")))
     | Amr_lexer.LexError (pos,msg) -> failwith (Printf.sprintf  "lexing error : %s at %s%!" msg (pp_pos delta pos))
     | Failure msg -> raise (Error (Printf.sprintf "Error: %s" msg))
 

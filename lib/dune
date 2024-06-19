@@ -7,5 +7,5 @@
  (public_name amr)
  (name amr)
  (preprocess (pps sedlex.ppx))
- (libraries str yojson containers sedlex menhirLib ppxlib)
+ (libraries str yojson containers sedlex menhirLib)
 )

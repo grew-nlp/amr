@@ -19,8 +19,8 @@ let read_nlines file =
     close_in in_ch;
     List.rev !rev_lines
 
-let pp_pos delta { Ppxlib.pos_lnum; pos_cnum; pos_bol; _} =
-  Printf.sprintf "line %d:%d" (delta + pos_lnum) (pos_cnum - pos_bol)
+(* let pp_pos delta { Ppxlib.pos_lnum; pos_cnum; pos_bol; _} =
+  Printf.sprintf "line %d:%d" (delta + pos_lnum) (pos_cnum - pos_bol) *)
 
 
 
@@ -30,11 +30,12 @@ module Amr = struct
   exception Error of string (* TODO json *)
 
   let form_lexbuf ?(delta=0) ?sent_id ?(meta=[]) ?penman lexbuf =
+    let () = ignore delta in
     let lexer = Sedlexing.with_tokenizer Amr_lexer.token lexbuf in
     let parser = MenhirLib.Convert.Simplified.traditional2revised Amr_parser.amr in
     try let graph = parser lexer in { Ast.sent_id = sent_id; graph; meta; penman; } with
     | Amr_parser.Error -> raise (Error (Printf.sprintf "Syntax error%s" (match sent_id with Some s -> ": "^s | None -> "")))
-    | Amr_lexer.LexError (pos,msg) -> failwith (Printf.sprintf  "lexing error : %s at %s%!" msg (pp_pos delta pos))
+    | Amr_lexer.LexError (_pos,msg) -> failwith (Printf.sprintf  "lexing error : %s%!" msg)
     | Failure msg -> raise (Error (Printf.sprintf "Error: %s" msg))
 
   let parse_aux ?(delta=0) ?(sent_id="__no_sent_id__") ?(meta=[]) penman =

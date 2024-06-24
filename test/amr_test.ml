@@ -26,6 +26,15 @@ let _  =
   |> Yojson.Basic.pretty_to_string
   |> printf "%s\n%!"
 
+let _  =
+  printf "---- Amr.load non Ascii file ----\n%!";
+
+  "test_amr.4.txt"
+  |> Amr.load
+  |> Amr.to_json ~unfold:true
+  |> Yojson.Basic.pretty_to_string
+  |> printf "%s\n%!"
+
   
 let _  =
   printf "---- Amr_corpus.load ----\n%!";
@@ -35,8 +44,6 @@ let _  =
   |> Array.length
   |> printf "%d\n%!"
 
-
-
 let _  =
   printf "---- unfold=true ----\n%!";
   "(r / remember-01 :polarity - :ARG0 (i / i))"
@@ -45,7 +52,7 @@ let _  =
   |> Yojson.Basic.pretty_to_string
   |> printf "%s\n%!"
 
-  let _  =
+let _  =
   printf "---- unfold=false ----\n%!";
   "(r / remember-01 :polarity - :ARG0 (i / i))"
   |> Amr.parse

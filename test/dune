@@ -1,5 +1,9 @@
 (test
  (name amr_test)
  (libraries amr)
- (deps penman_ex.amr amr-bank-struct-v3.0.txt)
+ (deps 
+   penman_ex.amr 
+   amr-bank-struct-v3.0.txt
+   test_amr.4.txt
+ )
 )

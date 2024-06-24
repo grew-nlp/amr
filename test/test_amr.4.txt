@@ -1,0 +1,8 @@
+(x9 / 摹本
+      :mod(x8)  (x7 / 画
+            :mod()  (x5 / 那)
+            :cunit()  (x6 / 副))
+      :domain(x4)  (x16 / thing
+            :location(x2)  (x1 / 页头))
+      :mod()  (x3 / 就))
+

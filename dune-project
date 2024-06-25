@@ -1,7 +1,7 @@
 (lang dune 3.4)
 
 (name amr)
-(version 0.7.0)
+(version 0.7.1)
 
 (using menhir 2.0)
 

@@ -25,7 +25,7 @@
  (name amr)
  (synopsis "Parsing of Abstract Meaning Representation corpora")
  (description "This library was built to be used by Grew to deal with AMR corpora")
- (depends ocaml dune yojson menhir)
+ (depends ocaml dune yojson menhir sedlex)
  (tags
   ("nlp" "Abstract Meaning Representation")) 
  (conflicts libcaml-amr)

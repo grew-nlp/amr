@@ -55,7 +55,7 @@ end
 module Amr_corpus = struct
   type t = (string * Amr.t) array
 
-  let of_nlines nlines =
+  let list_of_nlines nlines =
     let buff = Buffer.create 32 in
     let current_meta = ref [] in
     let stack = ref [] in
@@ -99,8 +99,15 @@ module Amr_corpus = struct
           bprintf buff "%s\n" s
     ) nlines;
     push ();
-    Array.of_list (List.rev !stack)
+    List.rev !stack
+  let of_nlines nlines = nlines |> list_of_nlines |> Array.of_list
 
   let load corpus_file = of_nlines (read_nlines corpus_file)
 
+  let load_list file_list = 
+    List.fold_left
+    (fun acc file -> 
+      (file |> read_nlines |> list_of_nlines) @ acc
+    ) [] file_list
+    |> Array.of_list
 end

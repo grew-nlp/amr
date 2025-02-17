@@ -38,4 +38,7 @@ module Amr_corpus : sig
   val load: string -> t
   (** Parsing of a corpus from a file *)
 
+  val load_list: string list -> t
+  (** Parsing of a corpus from a list of files *)
+
 end

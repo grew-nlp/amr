@@ -35,7 +35,8 @@ module Amr = struct
     let parser = MenhirLib.Convert.Simplified.traditional2revised Amr_parser.amr in
     try let graph = parser lexer in { Ast.sent_id = sent_id; graph; meta; penman; } with
     | Amr_parser.Error -> raise (Error (Printf.sprintf "Syntax error%s" (match sent_id with Some s -> ": "^s | None -> "")))
-    | Amr_lexer.LexError (_pos,msg) -> failwith (Printf.sprintf  "lexing error : %s%!" msg)
+    | Amr_lexer.LexError ({ pos_lnum; pos_bol; pos_cnum; _ },msg) -> 
+       failwith (Printf.sprintf  "line=%d, col=%d, lexing error %s" (pos_lnum+delta) (pos_cnum-pos_bol) msg)
     | Failure msg -> raise (Error (Printf.sprintf "Error: %s" msg))
 
   let parse_aux ?(delta=0) ?(sent_id="__no_sent_id__") ?(meta=[]) penman =

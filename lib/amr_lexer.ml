@@ -25,7 +25,7 @@ let rec token buf =
   | ')' -> RPAREN
   | '/' -> SLASH
   | numeral -> DATA (Sedlexing.Utf8.lexeme buf)
-  | Plus ("_" | "-" | tr8876_ident_char | digit) -> IDENT (Sedlexing.Utf8.lexeme buf)
+  | Plus ("_" | "-" | "." | tr8876_ident_char | digit) -> IDENT (Sedlexing.Utf8.lexeme buf)
   | ':', Plus (letter | digit | '-'), Opt ('(', Star (letter | digit |'_'), ')') -> LABEL (Sedlexing.Utf8.lexeme buf |> clean_label)
   | eof -> EOF
   | _ ->

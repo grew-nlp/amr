@@ -1,7 +1,7 @@
 (lang dune 3.4)
 
 (name amr)
-(version 0.8.0)
+(version 0.8.1)
 
 (using menhir 2.0)
 
@@ -25,7 +25,7 @@
  (name amr)
  (synopsis "Parsing of Abstract Meaning Representation corpora")
  (description "This library was built to be used by Grew to deal with AMR corpora")
- (depends ocaml dune yojson menhir sedlex)
+ (depends ocaml dune containers yojson menhir sedlex)
  (tags
   ("nlp" "Abstract Meaning Representation")) 
  (conflicts libcaml-amr)
